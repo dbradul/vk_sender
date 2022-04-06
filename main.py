@@ -98,7 +98,8 @@ def process_file(client, filename):
             ws[f'J{str(r)}'].value = resp
             logger.info(f'Processed {vkurl} with result {resp}')
             time_left_to_sleep_sec = max(10 - (time.time() - start_time), 0)
-            time.sleep(time_left_to_sleep_sec)
+            # time.sleep(time_left_to_sleep_sec)
+            time.sleep(random.randint(int(os.getenv('MIN_WAIT')), int(os.getenv('MAX_WAIT'))))
         except Exception as ex:
             logger.error(f'Failed to send message for user {vkurl}: {ex}')
 
