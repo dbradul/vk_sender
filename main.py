@@ -15,7 +15,7 @@ from utils import logger, login_retrier, repack_exc
 
 load_dotenv()
 
-VIDEO_ENDINGS = ['.mp4']
+VIDEO_ENDINGS = ['.mp4', '.webm', '.mkv', '.mov', '.avi', '.flv', '.ogg', '.wmv']
 
 @login_retrier
 @repack_exc
