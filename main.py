@@ -1,5 +1,4 @@
 import os
-import os
 import random
 import sys
 import time
@@ -48,7 +47,7 @@ def send_message_photo(client, user_id, message, mediaurl):
         # owner_id=client.owner_id
     )
 
-    if res_get_albums.items:
+    if res_get_albums.get('items'):
         album_id = res_get_albums['items'][0]['id']
         client.owner_id = res_get_albums['items'][0]['owner_id']
 
