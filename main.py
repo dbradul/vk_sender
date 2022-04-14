@@ -9,15 +9,17 @@ from dotenv import load_dotenv
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from models import VkClientProxy
-from utils import logger, login_retrier, repack_exc
+from vk_common.models import VkClientProxy
+from vk_common.utils import logger, login_retrier, repack_exc, login_enforcer
 
 load_dotenv()
 
 VIDEO_ENDINGS = ['.mp4', '.webm', '.mkv', '.mov', '.avi', '.flv', '.ogg', '.wmv']
+NUM_USERS_BEFORE_ASK = int(os.getenv('NUM_USERS_BEFORE_ASK'))
 
 @login_retrier
 @repack_exc
+@login_enforcer(num_calls_threshold=os.getenv('NUM_CALLS_THRESHOLD'))
 def send_message_video(client: VkClientProxy, user_id, message, mediaurl):
     vk_uploader = vk_api.upload.VkUpload(client._obj)
 
@@ -40,6 +42,7 @@ def send_message_video(client: VkClientProxy, user_id, message, mediaurl):
 
 @login_retrier
 @repack_exc
+@login_enforcer(num_calls_threshold=os.getenv('NUM_CALLS_THRESHOLD'))
 def send_message_photo(client, user_id, message, mediaurl):
 
     album_id = 0
@@ -110,9 +113,8 @@ def process_file(client, filename):
     sheet = wb.worksheets[0]
     row_count = sheet.max_row
 
-    for r in range(2, row_count + 1):
+    for idx, r in enumerate(range(2, row_count + 1), 1):
         try:
-            start_time = time.time()
             vkurl = ws[f'F{str(r)}'].value
             message = ws[f'G{str(r)}'].value
             mediaurl = ws[f'H{str(r)}'].value
@@ -124,11 +126,14 @@ def process_file(client, filename):
                 resp = send_message_photo(client, user_id=user_id, message=message, mediaurl=mediaurl)
             ws[f'J{str(r)}'].value = resp
             logger.info(f'Processed {vkurl} with result {resp}')
-            time_left_to_sleep_sec = max(10 - (time.time() - start_time), 0)
-            # time.sleep(time_left_to_sleep_sec)
             time.sleep(random.randint(int(os.getenv('MIN_WAIT')), int(os.getenv('MAX_WAIT'))))
         except Exception as ex:
             logger.error(f'Failed to send message for user {vkurl}: {ex}')
+        finally:
+            if (idx % NUM_USERS_BEFORE_ASK) == 0:
+                print('\n---------------------------------------------------------')
+                print('EXCEEDED MAX USER LIMIT')
+                input('PLEASE, PRESS [[ ENTER ]] TO CONTINUE...')
 
     wb.save(filename)
 
@@ -140,7 +145,8 @@ def main():
 
     vk_client = VkClientProxy()
     vk_client.load_accounts()
-    vk_client.direct_auth(app_id=os.getenv('VK_APP_ID'), client_secret=os.getenv('VK_APP_SECRET'))
+    # vk_client.direct_auth(app_id=os.getenv('VK_APP_ID'), client_secret=os.getenv('VK_APP_SECRET'))
+    vk_client.auth()
 
     if len(sys.argv) > 1:
         param = sys.argv[1]
