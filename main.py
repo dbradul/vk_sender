@@ -42,7 +42,7 @@ def send_message_video(client: VkClientProxy, user_id, message, mediaurl):
 
 @login_retrier
 @repack_exc
-@login_enforcer(num_calls_threshold=os.getenv('NUM_CALLS_THRESHOLD'))
+@login_enforcer(num_calls_threshold=int(os.getenv('NUM_CALLS_THRESHOLD')))
 def send_message_photo(client, user_id, message, mediaurl):
 
     album_id = 0
