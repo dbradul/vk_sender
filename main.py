@@ -19,7 +19,7 @@ NUM_USERS_BEFORE_ASK = int(os.getenv('NUM_USERS_BEFORE_ASK'))
 
 @login_retrier
 @repack_exc
-@login_enforcer(num_calls_threshold=os.getenv('NUM_CALLS_THRESHOLD'))
+@login_enforcer(num_calls_threshold=int(os.getenv('NUM_CALLS_THRESHOLD')))
 def send_message_video(client: VkClientProxy, user_id, message, mediaurl):
     vk_uploader = vk_api.upload.VkUpload(client._obj)
 
