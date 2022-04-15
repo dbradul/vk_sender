@@ -126,6 +126,7 @@ def process_file(client, filename):
                 resp = send_message_photo(client, user_id=user_id, message=message, mediaurl=mediaurl)
             ws[f'J{str(r)}'].value = resp
             logger.info(f'Processed {vkurl} with result {resp}')
+            wb.save(filename)
             time.sleep(random.randint(int(os.getenv('MIN_WAIT')), int(os.getenv('MAX_WAIT'))))
         except Exception as ex:
             logger.error(f'Failed to send message for user {vkurl}: {ex}')
