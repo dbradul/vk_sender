@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "82aa5f72eca5be0f4c501e9bd917bf98a8ab11add08f14ddfadbd237990a5fc6"
+            "sha256": "24db7152142adedb52266df3fcc09ec97e5e4f0878f9da7defadb75e9200221a"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.9"
+            "python_version": "3.8"
         },
         "sources": [
             {
@@ -31,6 +31,13 @@
             "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
+        "console": {
+            "hashes": [
+                "sha256:5a96b54e93e15c04d7df2ee7e8521a674002483f6375162212b517892b834389",
+                "sha256:bdcab2b99c21176bcdbbfbcfd117f34d4211cc55a0c2376e236b4f82ba3533af"
+            ],
+            "version": "==0.9907"
+        },
         "et-xmlfile": {
             "hashes": [
                 "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c",
@@ -38,6 +45,13 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==1.1.0"
+        },
+        "ezenv": {
+            "hashes": [
+                "sha256:a5a5d001a2352517b5992322c1795890dd3c9cf0ac6ad7912b0768fe84f33173",
+                "sha256:fe4b20071c7497071d33530040f52f12a00dc938e5b5f7d5c4b7f922196c4ac6"
+            ],
+            "version": "==0.92"
         },
         "idna": {
             "hashes": [
@@ -138,7 +152,7 @@
         "vk-common": {
             "editable": true,
             "git": "ssh://git@github.com/dbradul/vk_common.git",
-            "ref": "e2b6e864af7c776940cd8eabf2fa131fefbe5301"
+            "ref": "047fac26b47d4807f59492e2f188ab3e42a3e63f"
         }
     },
     "develop": {}

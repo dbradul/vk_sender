@@ -15,7 +15,10 @@ from vk_common.utils import logger, login_retrier, repack_exc, login_enforcer
 load_dotenv()
 
 VIDEO_ENDINGS = ['.mp4', '.webm', '.mkv', '.mov', '.avi', '.flv', '.ogg', '.wmv']
-NUM_USERS_BEFORE_ASK = int(os.getenv('NUM_USERS_BEFORE_ASK'))
+NUM_ACCOUNTS_THRESHOLD = int(os.getenv('NUM_ACCOUNTS_THRESHOLD'))
+NUM_CALLS_THRESHOLD = int(os.getenv('NUM_CALLS_THRESHOLD'))
+MIN_WAIT = int(os.getenv('MIN_WAIT'))
+MAX_WAIT = int(os.getenv('MAX_WAIT'))
 
 @login_retrier
 @repack_exc
@@ -42,7 +45,7 @@ def send_message_video(client: VkClientProxy, user_id, message, mediaurl):
 
 @login_retrier
 @repack_exc
-@login_enforcer(num_calls_threshold=int(os.getenv('NUM_CALLS_THRESHOLD')))
+# @login_enforcer(num_calls_threshold=int(os.getenv('NUM_CALLS_THRESHOLD')))
 def send_message_photo(client, user_id, message, mediaurl):
 
     album_id = 0
@@ -127,26 +130,21 @@ def process_file(client, filename):
             ws[f'J{str(r)}'].value = resp
             logger.info(f'Processed {vkurl} with result {resp}')
             wb.save(filename)
-            time.sleep(random.randint(int(os.getenv('MIN_WAIT')), int(os.getenv('MAX_WAIT'))))
+            time.sleep(random.randint(MIN_WAIT, MAX_WAIT))
         except Exception as ex:
             logger.error(f'Failed to send message for user {vkurl}: {ex}')
-        finally:
-            if (idx % NUM_USERS_BEFORE_ASK) == 0:
-                print('\n---------------------------------------------------------')
-                print('EXCEEDED MAX USER LIMIT')
-                input('PLEASE, PRESS [[ ENTER ]] TO CONTINUE...')
 
     wb.save(filename)
 
 
-
 def main():
-    ### res = get_token(app_id=8113652, client_secret='lYKFkDQmN4c4CnCCUew5', username='+380679372129', password='sTGKPRZfnt73%8m')
-    # token, user_id = get_token(app_id=2274003, client_secret='hHbZxrka2uZ6jB1inYsH', username='+380679372129', password='sTGKPRZfnt73%8m')
 
-    vk_client = VkClientProxy()
+    vk_client = VkClientProxy(
+        num_calls_threshold=NUM_CALLS_THRESHOLD,
+        num_accounts_threshold=NUM_ACCOUNTS_THRESHOLD,
+        call_domain='messages'
+    )
     vk_client.load_accounts()
-    # vk_client.direct_auth(app_id=os.getenv('VK_APP_ID'), client_secret=os.getenv('VK_APP_SECRET'))
     vk_client.auth()
 
     if len(sys.argv) > 1:
