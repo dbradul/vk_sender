@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 from vk_common.models import VkClientProxy
-from vk_common.utils import logger, login_retrier, repack_exc, login_enforcer
+from vk_common.utils import logger, login_retrier, repack_exc
 
 load_dotenv()
 
