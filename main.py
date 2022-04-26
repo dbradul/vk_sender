@@ -142,7 +142,8 @@ def main():
     vk_client = VkClientProxy(
         num_calls_threshold=NUM_CALLS_THRESHOLD,
         num_accounts_threshold=NUM_ACCOUNTS_THRESHOLD,
-        call_domain='messages'
+        call_domain='messages',
+        reauth_func=VkClientProxy.direct_auth_until_success
     )
     vk_client.load_accounts()
     vk_client.direct_auth_until_success()
